@@ -1,0 +1,22 @@
+name: Rebuild web app on definition change
+
+on:
+  push:
+    branches: [via-keyboards-buildbox]
+    paths:
+      - 'v3/**'
+      - 'src/**'
+      - 'scripts/**'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start the cPanel deploy in kiwikey/via-app
+        run: |
+          curl -fsS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.APP_DISPATCH_TOKEN }}" \
+            https://api.github.com/repos/kiwikey/via-app/actions/workflows/deploy-to-cpanel.yml/dispatches \
+            -d '{"ref":"via-app-buildbox"}'
